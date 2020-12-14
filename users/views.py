@@ -7,6 +7,7 @@ from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, DetailView
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
 
 from core.models import Subscription
 from .forms import SignUpForm, LoginForm
@@ -56,11 +57,21 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ProfileView, self).get_context_data(**kwargs)
-        sub = get_object_or_404(Subscription,user=self.get_object())
-        context['last4'] = sub.last4
-        status = sub.active
-        if status:
-            context['status'] = "Your Subscription is active"
+        try:
+            sub = Subscription.objects.get(user=self.request.user)
+            status = sub.active
+
+            if status:
+                context['status'] = "Your Subscription is active"
+
+            context['last4'] = sub.last4
+
+        except ObjectDoesNotExist:
+            context['status'] = ''
+            
+
+
+
 
 
         return context
