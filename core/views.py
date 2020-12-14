@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Subscription
+from .forms import AddressForm
 
 import json
 import stripe
@@ -14,6 +15,27 @@ import stripe
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
 # Create your views here.
+class ShippingView(LoginRequiredMixin, View):
+
+    def get(self, *args,**kwargs):
+        form = AddressForm()
+
+        context= {
+            'form':form,
+        }
+        return render(self.request, 'core/shipping.html', context)
+
+    def post(self, *args, **kwargs):
+        form = AddressForm(self.request.POST)
+
+        if form.is_valid():
+            new_address = form.save(commit=False)
+            new_address.user = self.request.user
+            new_address.address_type = "S"
+            new_address.save()
+
+        return HttpResponseRedirect(reverse('core:checkout'))
+
 class CheckoutView(LoginRequiredMixin,View):
     def get(self, *args,**kwargs):
         return render(self.request, 'core/subscribe.html')
