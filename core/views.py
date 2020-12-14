@@ -27,11 +27,14 @@ class ShippingView(LoginRequiredMixin, View):
 
     def post(self, *args, **kwargs):
         form = AddressForm(self.request.POST)
+        sub = self.request.user.subscriptions
 
         if form.is_valid():
             new_address = form.save(commit=False)
             new_address.user = self.request.user
             new_address.save()
+            sub.shipping_address=new_address
+            sub.save()
 
         return HttpResponseRedirect(reverse('core:checkout'))
 
