@@ -19,7 +19,7 @@ class SignupView(CreateView):
     template_name = 'users/signup.html'
 
     def get_success_url(self):
-        return reverse_lazy('core:checkout')
+        return reverse_lazy('core:shipping')
 
     def form_valid(self, form):
         stripe.api_key=settings.STRIPE_TEST_SECRET_KEY
