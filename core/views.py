@@ -31,7 +31,6 @@ class ShippingView(LoginRequiredMixin, View):
         if form.is_valid():
             new_address = form.save(commit=False)
             new_address.user = self.request.user
-            new_address.address_type = "S"
             new_address.save()
 
         return HttpResponseRedirect(reverse('core:checkout'))
