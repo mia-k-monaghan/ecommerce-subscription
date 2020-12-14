@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.conf import settings
+from django.urls import reverse
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -27,14 +28,18 @@ class ShippingView(LoginRequiredMixin, View):
 
     def post(self, *args, **kwargs):
         form = AddressForm(self.request.POST)
-        sub = self.request.user.subscriptions
+
 
         if form.is_valid():
+            # save address in address model
             new_address = form.save(commit=False)
             new_address.user = self.request.user
             new_address.save()
-            sub.shipping_address=new_address
-            sub.save()
+
+            # update subscription model with address
+            dj_subscription = Subscription.objects.get(user=self.request.user)
+            dj_subscription.shipping_address=new_address
+            dj_subscription.save()
 
         return HttpResponseRedirect(reverse('core:checkout'))
 
