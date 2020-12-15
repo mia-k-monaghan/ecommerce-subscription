@@ -10,5 +10,6 @@ urlpatterns = [
     path('success/', views.SuccessView.as_view(), name='success'),
     path('create-customer-stripe-session/', views.createcustomersession, name='session'),
     path('shipping/', views.ShippingView.as_view(), name='shipping'),
+    path('webhooks/', views.webhook_view),
 
 ]

@@ -1,13 +1,16 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.urls import reverse
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
 from django.views.generic import View
 from django.views.generic.base import TemplateView
-from django.core.exceptions import ObjectDoesNotExist
 from .models import Subscription
 from .forms import AddressForm
 
@@ -19,7 +22,6 @@ stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 # Create your views here.
 class IndexView(TemplateView):
     template_name = 'core/index.html'
-
 
 class ShippingView(LoginRequiredMixin, View):
 
@@ -114,3 +116,26 @@ def createcustomersession(request):
 
     )
     return HttpResponseRedirect(session.url)
+
+@require_POST
+@csrf_exempt
+def webhook_view(request):
+    payload=request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(payload,sig_header, settings.STRIPE_SIGNING_SECRET)
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    if event['type']=='customer.subscription.deleted':
+        stripe_sub = event['data']['object']
+        sub = Subscription.objects.get(stripe_subscription=stripe_sub['id'])
+        sub.active = False
+        sub.save()
+        print('Subscription Inactive')
+
+    else:
+        pass
+    return HttpResponse(status=200)

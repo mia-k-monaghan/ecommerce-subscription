@@ -26,6 +26,7 @@ from . import secret_keys
 SECRET_KEY = secret_keys.SECRET_KEY
 STRIPE_TEST_SECRET_KEY = secret_keys.STRIPE_TEST_SECRET_KEY
 STRIPE_TEST_PUBLISHABLE_KEY = secret_keys.STRIPE_TEST_PUBLISHABLE_KEY
+STRIPE_SIGNING_SECRET = secret_keys.WEBHOOK_SIGNING_SECRET
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
