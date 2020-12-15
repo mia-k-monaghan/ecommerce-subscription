@@ -14,8 +14,8 @@ class ShippingAddress(models.Model):
     def __str__(self):
         return self.street_address
 
-        class Meta:
-            verbose_name_plural = 'Shipping Addresses'
+    class Meta:
+        verbose_name_plural = 'Shipping Addresses'
 
 class Subscription(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="subscriptions")
