@@ -21,9 +21,11 @@ TEMPLATE_DIR = BASE_DIR / 'templates'
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^-h^8*7i^#%fu2ao#%_yuri%j=_i-o+$xr=y-g-+f&twkc7b-w'
-STRIPE_TEST_SECRET_KEY = 'sk_test_51HA03iLPfeVqJ0LGta1164YMe79XwRSz4sWWWsKprvXv3dvWhgP994UN1UqiowIHh0hbLOKHdUDCCeuZFo0FwlQs00wVbK9yIW'
-STRIPE_TEST_PUBLISHABLE_KEY = 'pk_test_51HA03iLPfeVqJ0LGF7vJErtgow7hEF95tZc3jk1zhMmpXAcEfTR0mBSiPqu4oqlivxO9EAGfeIegQAIXzhUKbMWl00tdieedgt'
+from . import secret_keys
+
+SECRET_KEY = secret_keys.SECRET_KEY
+STRIPE_TEST_SECRET_KEY = secret_keys.STRIPE_TEST_SECRET_KEY
+STRIPE_TEST_PUBLISHABLE_KEY = secret_keys.STRIPE_TEST_PUBLISHABLE_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
