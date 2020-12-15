@@ -9,7 +9,8 @@ from django.views.generic import CreateView, View
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 
-from core.models import Subscription
+from core.models import Subscription, ShippingAddress
+from core.forms import AddressForm
 from .forms import SignUpForm, LoginForm
 
 import stripe
@@ -72,3 +73,22 @@ class ProfileView(View, LoginRequiredMixin):
             context = {}
 
         return render(self.request, 'users/profile.html', context)
+
+class ProfileUpdate(UpdateView):
+    model = CustomUser
+    template_name = 'users/user_update.html'
+    fields = ['first_name', 'last_name', 'email',]
+
+    def get_success_url(self):
+        pk = self.object.pk
+        return reverse_lazy('users:profile',args=[pk])
+
+class ShippingUpdateView(LoginRequiredMixin, UpdateView):
+    model=ShippingAddress
+    form_class = AddressForm
+    template_name = 'core/shipping_update.html'
+
+
+    def get_success_url(self):
+        pk = self.object.pk
+        return reverse_lazy('users:profile',args=[pk])
