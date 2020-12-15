@@ -22,7 +22,7 @@
     <p class="card-text">Shipping Address:
       <span class="float-right">{{street_address}}{% if apt_address %}, {{apt_address}}{% endif %} <br>
         {{city}}, {{state}} {{zip}}
-        <a href="{% url 'core:shipping-update' pk=address_pk %}"class='btn btn-outline'>Update</a>
+        <a href="{% url 'users:shipping-update' pk=address_pk %}"class='btn btn-outline'>Update</a>
       </span>
     </p>
 
