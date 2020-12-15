@@ -5,6 +5,7 @@
 __pycache__
 db.sqlite3
 media
+secret_keys.py
 
 # Backup files #
 *.bak
@@ -12,7 +13,7 @@ media
 # If you are using PyCharm #
 .idea/**/workspace.xml
 .idea/**/tasks.xml
-.idea/dictionaries 
+.idea/dictionaries
 .idea/**/dataSources/
 .idea/**/dataSources.ids
 .idea/**/dataSources.xml

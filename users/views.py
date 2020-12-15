@@ -5,11 +5,12 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, View
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 
-from core.models import Subscription
+from core.models import Subscription, ShippingAddress
+from core.forms import AddressForm
 from .forms import SignUpForm, LoginForm
 
 import stripe
@@ -50,28 +51,44 @@ class LoginView(auth_views.LoginView):
     def get_success_url(self):
         return reverse_lazy('users:profile', kwargs={'pk': self.request.user.pk})
 
-class ProfileView(LoginRequiredMixin, DetailView):
-    model = get_user_model()
-    context_object_name = 'user'
-    template_name = 'users/profile.html'
+class ProfileView(View, LoginRequiredMixin):
 
-    def get_context_data(self, **kwargs):
-        context = super(ProfileView, self).get_context_data(**kwargs)
+    def get(self, *args, **kwargs):
+        user = self.request.user
+
         try:
-            sub = Subscription.objects.get(user=self.request.user)
-            status = sub.active
+            address = Subscription.objects.get(user=self.request.user).address
 
-            if status:
-                context['status'] = "Your Subscription is active"
-
-            context['last4'] = sub.last4
-
+            context = {
+                'user':user,
+                'last4': user.last4,
+                'address_pk': address.pk,
+                'street_address':address.street_address,
+                'apt_address':address.apartment_address,
+                'city':address.city,
+                'state':address.state,
+                'zip':address.zip,
+            }
         except ObjectDoesNotExist:
-            context['status'] = ''
-            
+            context = {}
+
+        return render(self.request, 'users/profile.html', context)
+
+class ProfileUpdate(UpdateView):
+    model = CustomUser
+    template_name = 'users/profile_update.html'
+    fields = ['first_name', 'last_name', 'email',]
+
+    def get_success_url(self):
+        pk = self.object.pk
+        return reverse_lazy('users:profile',args=[pk])
+
+class ShippingUpdateView(LoginRequiredMixin, UpdateView):
+    model=ShippingAddress
+    form_class = AddressForm
+    template_name = 'users/shipping_update.html'
 
 
-
-
-
-        return context
+    def get_success_url(self):
+        pk = self.object.pk
+        return reverse_lazy('users:profile',args=[pk])
