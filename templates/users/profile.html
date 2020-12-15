@@ -9,34 +9,62 @@
   <div class="card-body  mb-2">
     <h5 class="card-title">Account Info</h5>
 
-    <p class="card-text">Name: <span class="float-right">
-      {{user.first_name}} {{user.last_name}}
-      <a href="{% url 'users:profile-update' pk=user.pk %}" class='btn btn-outline'>Update</a>
-    </span>
-    </p>
+<ul class="list-group list-group-flush">
+  <li class="list-group-item">
+    <p class="card-text">Name:<span class="float-right">
+      {{user.first_name}} {{user.last_name}}</span></p>
+    <p class="card-text">Email:<span class="float-right">{{user.email}}</span></p>
+    <a href="{% url 'users:profile-update' pk=user.pk %}"class='btn btn-outline-secondary float-right'>Update</a>
 
-    <p class="card-text">Email: <span class="float-right">{{user.email}}
-      <a href="{% url 'users:profile-update' pk=user.pk %}"class='btn btn-outline'>Update</a>
-    </span></p>
+  </li>
 
-    <p class="card-text">Shipping Address:
-      <span class="float-right">{{street_address}}{% if apt_address %}, {{apt_address}}{% endif %} <br>
-        {{city}}, {{state}} {{zip}}
-        <a href="{% url 'users:shipping-update' pk=address_pk %}"class='btn btn-outline'>Update</a>
-      </span>
-    </p>
+    {% if subscription %}
+    {% if address_pk %}
 
-    <p class="card-text">Payment:
-      <span class="float-right">**** **** **** {{last4}}</span>
-    </p>
+      <li class="list-group-item">
+        <p class="card-text"><strong>Shipping Address:</strong>
+            <span class="float-right">{{street_address}}{% if apt_address %}, {{apt_address}}{% endif %} <br>
+              {{city}}, {{state}} {{zip}}</span></p>
+        <br>
+        <a href="{% url 'users:shipping-update' pk=address_pk %}"class='btn btn-outline-secondary float-right'>Update</a>
+        <br>
+      </li>
 
+    {% endif %}
     <br>
 
-    <form method="POST" action="{% url 'core:session' %}">
-      {% csrf_token %}
-        <button class="btn btn-success" type="submit">Manage billing</button>
-    </form>
+    <li class="list-group-item">
+      {% if last4 %}
 
+        <p class="card-text"><strong>Payment:</strong>
+          <span class="float-right">**** **** **** {{last4}}</span>
+        </p>
+      {% endif %}
+
+      <br>
+
+
+      <form method="POST" action="{% url 'core:session' %}">
+        {% csrf_token %}
+          <button class="btn btn-success float-right" type="submit">Manage Billing</button>
+      </form>
+
+      {% if active %}
+      <p><strong>Your subscription is active!</strong></p>
+      {% else %}
+      <p><strong>Your subscription is inactive</strong></p>
+      {% endif %}
+
+      <br>
+  </li>
+
+  {% else %}
+    <br>
+    <p> <strong>You don't have a subscription yet!</strong> </p>
+
+  {% endif %}
+
+</ul>
   </div>
 </div>
 

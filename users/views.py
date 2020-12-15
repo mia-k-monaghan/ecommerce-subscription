@@ -5,8 +5,8 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import CreateView, View
-from django.shortcuts import get_object_or_404
+from django.views.generic import CreateView, View, UpdateView
+from django.shortcuts import get_object_or_404, render
 from django.core.exceptions import ObjectDoesNotExist
 
 from core.models import Subscription, ShippingAddress
@@ -57,25 +57,31 @@ class ProfileView(View, LoginRequiredMixin):
         user = self.request.user
 
         try:
-            address = Subscription.objects.get(user=self.request.user).address
+            subscription = Subscription.objects.get(user=self.request.user)
+            address = subscription.shipping_address
 
             context = {
                 'user':user,
-                'last4': user.last4,
+                'last4': subscription.last4,
                 'address_pk': address.pk,
                 'street_address':address.street_address,
                 'apt_address':address.apartment_address,
                 'city':address.city,
                 'state':address.state,
                 'zip':address.zip,
+                'active':subscription.active,
+                'subscription':subscription.pk,
             }
         except ObjectDoesNotExist:
-            context = {}
+            context = {
+                'user':user,
+                'subscription':''
+            }
 
         return render(self.request, 'users/profile.html', context)
 
 class ProfileUpdate(UpdateView):
-    model = CustomUser
+    model = get_user_model()
     template_name = 'users/profile_update.html'
     fields = ['first_name', 'last_name', 'email',]
 
