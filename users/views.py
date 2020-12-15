@@ -76,7 +76,7 @@ class ProfileView(View, LoginRequiredMixin):
 
 class ProfileUpdate(UpdateView):
     model = CustomUser
-    template_name = 'users/user_update.html'
+    template_name = 'users/profile_update.html'
     fields = ['first_name', 'last_name', 'email',]
 
     def get_success_url(self):
@@ -86,7 +86,7 @@ class ProfileUpdate(UpdateView):
 class ShippingUpdateView(LoginRequiredMixin, UpdateView):
     model=ShippingAddress
     form_class = AddressForm
-    template_name = 'core/shipping_update.html'
+    template_name = 'users/shipping_update.html'
 
 
     def get_success_url(self):
