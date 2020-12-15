@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+from django.views.generic.base import TemplateView
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Subscription
 from .forms import AddressForm
@@ -16,6 +17,10 @@ import stripe
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
 # Create your views here.
+class IndexView(TemplateView):
+    template_name = 'core/index.html'
+
+
 class ShippingView(LoginRequiredMixin, View):
 
     def get(self, *args,**kwargs):

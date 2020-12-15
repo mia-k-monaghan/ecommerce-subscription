@@ -5,11 +5,11 @@ from django.contrib.auth import views as auth_views
 app_name = 'users'
 
 urlpatterns = [
-    path('', SignupView.as_view(), name='index'),
+    path('signup/', SignupView.as_view(), name='signup'),
     path('profile/<pk>',ProfileView.as_view(), name='profile'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('profile-update/<pk>',ProfileUpdate.as_view(), name='profile-update'),
-    path('shipping-update/<pk>',ShippingUpdateView.as_view(), name='shipping-update'),
+    path('profile/<pk>/profile-update/',ProfileUpdate.as_view(), name='profile-update'),
+    path('profile/<pk>/shipping-update/',ShippingUpdateView.as_view(), name='shipping-update'),
 
 ]
