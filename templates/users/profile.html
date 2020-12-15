@@ -1,71 +1,74 @@
-{% extends "user_base.html" %}
-{% block user_content %}
+{% extends "base.html" %}
+{% block content %}
 
-<div class="card">
-  <div class="card-header">
-    Hello, {{user.first_name}}
-  </div>
+<div class="jumbotron">
+  <h1>Hello, {{user.first_name}}</h1>
+</div>
 
-  <div class="card-body  mb-2">
-    <h5 class="card-title">Account Info</h5>
+<div class="col-md-7 mx-auto">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Account Info</h5>
+    </div>
 
-<ul class="list-group list-group-flush">
-  <li class="list-group-item">
-    <p class="card-text">Name:<span class="float-right">
-      {{user.first_name}} {{user.last_name}}</span></p>
-    <p class="card-text">Email:<span class="float-right">{{user.email}}</span></p>
-    <a href="{% url 'users:profile-update' pk=user.pk %}"class='btn btn-outline-secondary float-right'>Update</a>
+    <div class="card-body  mb-2">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <p class="card-text">Name:<span class="float-right">
+            {{user.first_name}} {{user.last_name}}</span></p>
+          <p class="card-text">Email:<span class="float-right">{{user.email}}</span></p>
+          <a href="{% url 'users:profile-update' pk=user.pk %}"class='btn btn-outline-secondary float-right'>Update</a>
 
-  </li>
+        </li>
 
-    {% if subscription %}
-    {% if address_pk %}
+          {% if subscription %}
+          {% if address_pk %}
 
-      <li class="list-group-item">
-        <p class="card-text"><strong>Shipping Address:</strong>
-            <span class="float-right">{{street_address}}{% if apt_address %}, {{apt_address}}{% endif %} <br>
-              {{city}}, {{state}} {{zip}}</span></p>
-        <br>
-        <a href="{% url 'users:shipping-update' pk=address_pk %}"class='btn btn-outline-secondary float-right'>Update</a>
-        <br>
-      </li>
+            <li class="list-group-item">
+              <p class="card-text"><strong>Shipping Address:</strong>
+                  <span class="float-right">{{street_address}}{% if apt_address %}, {{apt_address}}{% endif %} <br>
+                    {{city}}, {{state}} {{zip}}</span></p>
+              <br>
+              <a href="{% url 'users:shipping-update' pk=address_pk %}"class='btn btn-outline-secondary float-right'>Update</a>
+              <br>
+            </li>
 
-    {% endif %}
-    <br>
+          {% endif %}
+          <br>
 
-    <li class="list-group-item">
-      {% if last4 %}
+          <li class="list-group-item">
+            {% if last4 %}
 
-        <p class="card-text"><strong>Payment:</strong>
-          <span class="float-right">**** **** **** {{last4}}</span>
-        </p>
-      {% endif %}
+              <p class="card-text"><strong>Payment:</strong>
+                <span class="float-right">**** **** **** {{last4}}</span>
+              </p>
+            {% endif %}
 
-      <br>
+            <br>
 
+            <form method="POST" action="{% url 'core:session' %}">
+              {% csrf_token %}
+                <button class="btn btn-success float-right" type="submit">Manage Billing</button>
+            </form>
 
-      <form method="POST" action="{% url 'core:session' %}">
-        {% csrf_token %}
-          <button class="btn btn-success float-right" type="submit">Manage Billing</button>
-      </form>
+            {% if active %}
+            <p><strong>Your subscription is active!</strong></p>
+            {% else %}
+            <p><strong>Your subscription is inactive</strong></p>
+            {% endif %}
 
-      {% if active %}
-      <p><strong>Your subscription is active!</strong></p>
-      {% else %}
-      <p><strong>Your subscription is inactive</strong></p>
-      {% endif %}
+            <br>
+        </li>
 
-      <br>
-  </li>
+        {% else %}
+          <br>
+          <p> <strong>You don't have a subscription yet!</strong> </p>
 
-  {% else %}
-    <br>
-    <p> <strong>You don't have a subscription yet!</strong> </p>
+        {% endif %}
 
-  {% endif %}
-
-</ul>
+      </ul>
+    </div>
   </div>
 </div>
 
-{% endblock user_content %}
+{% endblock content %}
